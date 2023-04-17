@@ -17,6 +17,7 @@ Building and improving this Ansible role have been sponsored by my current and p
 
 - [Requirements](#requirements)
 - [Default Variables](#default-variables)
+  - [intelgpu_enable_i386](#intelgpu_enable_i386)
   - [intelgpu_packages](#intelgpu_packages)
 - [Discovered Tags](#discovered-tags)
 - [Dependencies](#dependencies)
@@ -31,6 +32,16 @@ Building and improving this Ansible role have been sponsored by my current and p
 
 
 ## Default Variables
+
+### intelgpu_enable_i386
+
+Enable installation of i386 packages
+
+#### Default value
+
+```YAML
+intelgpu_enable_i386: true
+```
 
 ### intelgpu_packages
 
