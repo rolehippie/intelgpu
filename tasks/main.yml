@@ -1,0 +1,42 @@
+# Standards: 1.2
+---
+- name: Check i386 packages
+  when: intelgpu_enable_i386
+  register: intelgpu_i386_check
+  changed_when: intelgpu_i386_check.rc == 1
+  failed_when: intelgpu_i386_check.rc > 1
+  shell: dpkg --print-foreign-architectures | grep i386
+  tags:
+    - intelgpu
+
+- name: Enable i386 packages
+  when: intelgpu_enable_i386 and intelgpu_i386_check.rc == 1
+  command: dpkg --add-architecture i386
+  tags:
+    - intelgpu
+
+- name: Download repo key
+  shell:
+    cmd: curl -sSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xEB8B81E14DA65431D7504EA8F63F0F2B90935439" | gpg --dearmor --output /usr/share/keyrings/kisak-mesa-archive-keyring.gpg
+    creates: /usr/share/keyrings/kisak-mesa-archive-keyring.gpg
+  tags:
+    - intelgpu
+
+- name: Add apt repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/kisak-mesa-archive-keyring.gpg] https://ppa.launchpadcontent.net/kisak/kisak-mesa/ubuntu {{ ansible_distribution_release }} main"
+    filename: kisak-mesa
+    update_cache: True
+    state: present
+  tags:
+    - intelgpu
+
+- name: Install required packages
+  loop: "{{ intelgpu_packages }}"
+  package:
+    name: "{{ item }}"
+    state: present
+  tags:
+    - intelgpu
+
+...
